@@ -1,0 +1,148 @@
+<div class="booking-container">
+  <h2>Book Room {{ selectedRoom?.name ? ': ' + selectedRoom?.name : '' }}</h2>
+
+
+  <div *ngIf="selectedRoom" class="room-details-summary">
+    <div *ngIf="selectedRoom.images && selectedRoom.images.length > 0">
+      <img [src]="selectedRoom.images[0].source" alt="Room Image" class="room-thumbnail">
+    </div>
+    <p><strong>Room ID:</strong> {{ selectedRoom.id }}</p>
+    <p><strong>Price per Night:</strong> ${{ selectedRoom.pricePerNight }}</p>
+    <p><strong>Maximum Guests:</strong> {{ selectedRoom.maximumGuests }}</p>
+    <p *ngIf="selectedRoom.roomType"><strong>Room Type:</strong> {{ selectedRoom.roomType }}</p>
+
+  </div>
+
+
+  <div *ngIf="bookingError" class="alert alert-danger">
+    <pre>{{ bookingError }}</pre>
+  </div>
+
+
+  <div *ngIf="bookingSuccess" class="alert alert-success">
+    <h4>Booking Successful!</h4>
+    <p>Thank you for your booking. You will be redirected to the rooms page shortly.</p>
+  </div>
+
+
+  <form [formGroup]="bookingForm" (ngSubmit)="onSubmit()" *ngIf="selectedRoom && !bookingSuccess">
+
+
+    <div class="form-group mb-3">
+      <label for="customerName" class="form-label">Customer Name *</label>
+      <input
+        id="customerName"
+        type="text"
+        formControlName="customerName"
+        required
+        class="form-control"
+        placeholder="Enter your full name"
+        [class.is-invalid]="bookingForm.get('customerName')?.invalid && bookingForm.get('customerName')?.touched">
+      <div *ngIf="getFormControlError('customerName')" class="invalid-feedback">
+        {{ getFormControlError('customerName') }}
+      </div>
+    </div>
+
+
+    <div class="form-group mb-3">
+      <label for="customerPhone" class="form-label">Customer Phone *</label>
+      <input
+        id="customerPhone"
+        type="tel"
+        formControlName="customerPhone"
+        required
+        class="form-control"
+        placeholder="e.g., +995555123456"
+        [class.is-invalid]="bookingForm.get('customerPhone')?.invalid && bookingForm.get('customerPhone')?.touched">
+      <div *ngIf="getFormControlError('customerPhone')" class="invalid-feedback">
+        {{ getFormControlError('customerPhone') }}
+      </div>
+    </div>
+
+
+    <div class="form-group mb-3">
+      <label for="checkInDate" class="form-label">Check-in Date *</label>
+      <input
+        id="checkInDate"
+        type="date"
+        formControlName="checkInDate"
+        required
+        class="form-control"
+        [min]="minDate"
+        (change)="onDateChange()"
+        [class.is-invalid]="bookingForm.get('checkInDate')?.invalid && bookingForm.get('checkInDate')?.touched">
+      <div *ngIf="getFormControlError('checkInDate')" class="invalid-feedback">
+        {{ getFormControlError('checkInDate') }}
+      </div>
+    </div>
+
+
+    <div class="form-group mb-3">
+      <label for="checkOutDate" class="form-label">Check-out Date *</label>
+      <input
+        id="checkOutDate"
+        type="date"
+        formControlName="checkOutDate"
+        required
+        class="form-control"
+        [min]="bookingForm.get('checkInDate')?.value || minDate"
+        (change)="onDateChange()"
+        [class.is-invalid]="bookingForm.get('checkOutDate')?.invalid && bookingForm.get('checkOutDate')?.touched">
+      <div *ngIf="getFormControlError('checkOutDate')" class="invalid-feedback">
+        {{ getFormControlError('checkOutDate') }}
+      </div>
+    </div>
+
+
+    <div *ngIf="getFormErrors().length > 0" class="alert alert-warning">
+      <ul class="mb-0">
+        <li *ngFor="let error of getFormErrors()">{{ error }}</li>
+      </ul>
+    </div>
+
+
+    <div *ngIf="selectedRoom && getNumberOfNights() > 0" class="price-summary mb-3 p-3 bg-light rounded">
+      <h5>Booking Summary</h5>
+      <p class="mb-1"><strong>Check-in:</strong> {{ bookingForm.get('checkInDate')?.value | date:'fullDate' }}</p>
+      <p class="mb-1"><strong>Check-out:</strong> {{ bookingForm.get('checkOutDate')?.value | date:'fullDate' }}</p>
+      <p class="mb-1"><strong>Number of Nights:</strong> {{ getNumberOfNights() }}</p>
+      <p class="mb-1"><strong>Price per Night:</strong> ${{ selectedRoom.pricePerNight }}</p>
+      <hr>
+      <p class="mb-0"><strong>Total Price: ${{ getTotalPrice() }}</strong></p>
+    </div>
+
+
+    <div class="form-actions">
+      <button
+        type="button"
+        class="btn btn-secondary me-2"
+        (click)="goBack()">
+        Back to Rooms
+      </button>
+
+      <button
+        type="button"
+        class="btn btn-outline-secondary me-2"
+        (click)="resetForm()"
+        [disabled]="isSubmitting">
+        Reset Form
+      </button>
+
+      <button
+        type="submit"
+        [disabled]="bookingForm.invalid || !selectedRoom || getTotalPrice() <= 0 || isSubmitting"
+        class="btn btn-primary">
+        <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-2" role="status"></span>
+        {{ isSubmitting ? 'Processing...' : 'Confirm Booking' }}
+      </button>
+    </div>
+  </form>
+
+
+  <div *ngIf="!selectedRoom && !bookingError" class="text-center p-3">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="mt-2">Loading room details...</p>
+  </div>
+

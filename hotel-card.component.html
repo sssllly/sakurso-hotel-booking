@@ -1,0 +1,53 @@
+<div class="card h-100 shadow-sm hotel-card" *ngIf="product; else errorBlock">
+  <div class="card-img-container">
+    <img
+      *ngIf="!imageError"
+      [src]="product.featuredImage"
+      class="card-img-top"
+      [alt]="product.name"
+      (error)="onImageError()"
+      (load)="onImageLoad()"
+    />
+    <div *ngIf="imageError" class="card-img-placeholder">
+      <i class="fas fa-hotel fa-3x text-muted"></i>
+      <p class="text-muted mt-2">Image not available</p>
+    </div>
+  </div>
+
+  <div class="card-body d-flex flex-column">
+    <h5 class="card-title text-truncate" [title]="product.name">
+      {{ product.name }}
+    </h5>
+
+    <div class="location-info mb-2">
+      <p class="card-text mb-1">
+        <i class="fas fa-map-marker-alt text-danger"></i>
+        <span class="ms-1">{{ product.city }}</span>
+      </p>
+      <p class="card-text text-muted small text-truncate" [title]="product.address">
+        {{ product.address }}
+      </p>
+    </div>
+
+    <div class="mt-auto pt-2">
+      <div class="d-grid gap-2">
+        <button
+          class="btn btn-success"
+          (click)="navigateToRooms()"
+          [disabled]="isLoading">
+          <i class="fas fa-bed"></i>
+          View Rooms
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #errorBlock>
+  <div class="text-center">
+    <div role="status">
+      <span>Loading...</span>
+    </div>
+    <p class="mt-2 text-muted">Loading hotel information...</p>
+  </div>
+</ng-template>

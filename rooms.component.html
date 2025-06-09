@@ -1,0 +1,103 @@
+<div class="m-3">
+  <div class="date-filters mb-3">
+    <h4>Check Room Availability</h4>
+    <div class="row">
+      <div class="col-md-4 mb-3">
+        <div class="form-group">
+          <label for="checkInDateFilter" class="form-label">Check-in Date</label>
+          <input
+            type="date"
+            class="form-control"
+            id="checkInDateFilter"
+            [(ngModel)]="checkInDateFilter"
+            name="checkInDateFilter"
+            [min]="minDateFilter"
+          />
+        </div>
+      </div>
+      <div class="col-md-4 mb-3">
+        <div class="form-group">
+          <label for="checkOutDateFilter" class="form-label">Check-out Date</label>
+          <input
+            type="date"
+            class="form-control"
+            id="checkOutDateFilter"
+            [(ngModel)]="checkOutDateFilter"
+            name="checkOutDateFilter"
+            [min]="checkInDateFilter"
+          />
+        </div>
+      </div>
+      <div class="col-md-2 d-flex align-items-end mb-3">
+        <button class="btn btn-success w-100" (click)="getAvailableRooms()">
+          Check Availability
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mb-3">
+    <div class="col-md-4 mb-3">
+      <label for="maxGuests" class="form-label">Number Of Guests</label>
+      <select
+        class="form-control"
+        name="maxGuests"
+        id="maxGuests"
+        [(ngModel)]="maxGuests"
+        (change)="applyFilters()"
+      >
+        <option value="all">All</option>
+        <option value="1">1 Guest</option>
+        <option value="2">2 Guests</option>
+        <option value="3">3 Guests</option>
+        <option value="4">4 Guests</option>
+        <option value="5">5+ Guests</option>
+      </select>
+    </div>
+    <div class="col-md-4 mb-3">
+      <div>
+        <label for="minPrice" class="form-label">Min price per night</label>
+        <input
+          type="number"
+          class="form-control"
+          id="minPrice"
+          [(ngModel)]="minPrice"
+          (input)="applyFilters()"
+        />
+      </div>
+    </div>
+    <div class="col-md-4 mb-3">
+      <div>
+        <label for="maxPrice" class="form-label">Max price per night</label>
+        <input
+          type="number"
+          class="form-control"
+          id="maxPrice"
+          [(ngModel)]="maxPrice"
+          (input)="applyFilters()"
+        />
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div *ngIf="isLoading" class="text-center p-3">
+  <div>
+    <span>Loading rooms...</span>
+  </div>
+</div>
+
+<div *ngIf="errorMessage" class="alert alert-danger">
+  {{ errorMessage }}
+</div>
+
+<div class="cardContainer" *ngIf="!isLoading && !errorMessage">
+  <div *ngIf="filteredRooms.length === 0" class="alert alert-info">
+    No rooms match your filter criteria.
+  </div>
+  <app-room-card
+  *ngFor="let item of filteredRooms"
+  [room]="item"
+></app-room-card>
+</div>

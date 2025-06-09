@@ -1,0 +1,50 @@
+<div *ngIf="room; else errorBlock" class="card">
+  <div class="card-title">
+    <img
+      [src]="room.images && room.images.length > 0 ? room.images[0].source : 'https://media.istockphoto.com/id/627892060/photo/hotel-room-suite-with-view.jpg?s=612x612&w=0&k=20&c=YBwxnGH3MkOLLpBKCvWAD8F__T-ypznRUJ_N13Zb1cU='"
+      alt="Room Image"
+      class="room-image">
+  </div>
+  <div class="card-body">
+    <div class="name">
+      <h2 class="card-title">{{ room.name }}</h2>
+    </div>
+    <p class="card-text">
+      <strong>Room ID:</strong> {{ room.id }}
+    </p>
+    <p class="card-text">
+      <strong>Price per night:</strong> ${{ room.pricePerNight }}
+    </p>
+    <p class="card-text">
+      <strong>Availability:</strong>
+      <span [class]="room.available ? 'text-success' : 'text-danger'">
+        {{ room.available ? "Available" : "Not Available" }}
+      </span>
+    </p>
+    <p class="card-text">
+      <strong>Maximum guests:</strong> {{ room.maximumGuests }}
+    </p>
+    <p class="card-text" *ngIf="room.roomType">
+      <strong>Room type:</strong> {{ room.roomType }}
+    </p>
+
+    <div class="card-actions">
+      <button
+        class="btn btn-primary book-btn"
+        (click)="bookRoom(room.id)"
+        [disabled]="!room.available"
+        type="button">
+        Book Room
+      </button>
+    </div>
+  </div>
+</div>
+
+
+<ng-template #errorBlock>
+  <div class="card">
+    <div class="card-body">
+      <h2>Room details are loading or unavailable.</h2>
+    </div>
+  </div>
+</ng-template>

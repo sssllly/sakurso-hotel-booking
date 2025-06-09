@@ -1,0 +1,16 @@
+.card {
+  width: 320px;
+  margin: 20px;
+}
+.name {
+  height: 80px;
+}
+img {
+  width: 100%;
+}
+
+@media (max-width: 728px) {
+  .card {
+    width: 380px;
+  }
+}
